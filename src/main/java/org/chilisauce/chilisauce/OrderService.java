@@ -7,4 +7,6 @@ public interface OrderService {
 
     void processOrder(SauceOrder sauceOrder);
 
+    SauceOrder placeOrder(SauceOrder sauceOrder);
+
 }

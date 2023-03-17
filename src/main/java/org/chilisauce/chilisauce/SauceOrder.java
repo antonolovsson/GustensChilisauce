@@ -1,6 +1,5 @@
 package org.chilisauce.chilisauce;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,11 +15,16 @@ public class SauceOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int orderId;
-    String clientName;
-    int clientId;
+    private int orderId;
+    private String clientName;
+    private int clientId;
 
-    //TODO Fix this issue with the mappings.
     @OneToMany(mappedBy = "id")
     List<Sauce> sauceList;
+
+    int totalPrice;
+
+    public void calculateTotalPrice() {
+        totalPrice = sauceList.stream().map(sauce -> sauce.getQuantity() * sauce.getPrice()).mapToInt(Integer::intValue).sum();
+    }
 }

@@ -10,11 +10,6 @@ import java.util.List;
 @RestController()
 @RequestMapping("/api")
 public class SauceController {
-    @Autowired
-    SauceRepository sauceRepository;
-
-    @Autowired
-    OrderRepository orderRepository;
 
     @Autowired
     OrderService orderService;
@@ -22,39 +17,25 @@ public class SauceController {
     @Autowired
     SauceService sauceService;
 
-    @GetMapping("/stock")
-    public List<Sauce> getFullStock() {
-        return sauceRepository.findAll();
-    }
-
-    @PostMapping("/postsauce")
+    @PostMapping("/postSauce")
     public List<Sauce> postSauceList(@RequestBody List<Sauce> sauces) {
         sauceService.updateSauceList(sauces);
         return sauces;
     }
 
+    @GetMapping("/getStock")
+    public List<Sauce> getStock(@RequestParam(required = false) String scoville,
+                                @RequestParam(required = false) String origin,
+                                @RequestParam(required = false) String name) {
 
-    @GetMapping("/filter")
-    public List<Sauce> getFiltered(@RequestParam(required = false) String scoville,
-                                   @RequestParam(required = false) String origin,
-                                   @RequestParam(required = false) String name) {
-
-        return sauceRepository.getSauceByScovilleAndOriginAndName(scoville, origin, name);
-    }
-
-    @GetMapping("/filters")
-    public List<Sauce> getFiltereds(@RequestParam(required = false) String scoville,
-                                    @RequestParam(required = false) String origin,
-                                    @RequestParam(required = false) String name) {
-
-        return sauceRepository.getFilteredList(scoville, origin, name);
+        return sauceService.getStock(scoville, origin, name);
     }
 
 
     //TODO Display the values from the DB (not the null values)
-    @PostMapping("/placeorder")
+    @PostMapping("/placeOrder")
     public SauceOrder placeOrder(@RequestBody SauceOrder sauceOrder) {
-        SauceOrder savedSauceOrder = orderRepository.save(sauceOrder);
+        SauceOrder savedSauceOrder = orderService.placeOrder(sauceOrder);
         orderService.processOrder(sauceOrder);
         return savedSauceOrder;
     }

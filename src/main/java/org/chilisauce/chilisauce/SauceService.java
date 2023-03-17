@@ -9,6 +9,6 @@ public interface SauceService {
 
     List<Sauce> updateSauceList(List<Sauce> sauceList);
 
-    List<Sauce> getFilteredSauceList(int scoville, String origin, String name);
+    List<Sauce> getStock(String scoville, String origin, String name);
 
 }
