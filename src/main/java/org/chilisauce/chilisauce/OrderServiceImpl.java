@@ -9,6 +9,8 @@ import java.util.Optional;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private static final int DISCOUNT_AMOUNT = 5;
+
     @Autowired
     OrderRepository orderRepository;
 
@@ -41,6 +43,21 @@ public class OrderServiceImpl implements OrderService {
                         .build()).toList();
         sauceOrder.setSauceList(updatedWithInfoOrder);
         sauceOrder.calculateTotalPrice();
+        calculateDiscount(sauceOrder);
         return orderRepository.save(sauceOrder);
+    }
+
+
+    //TODO FIX THIS SHIT LOGIC
+    private void calculateDiscount(SauceOrder sauceOrder){
+        double newTotalPrice = 0;
+        for (Sauce sauce : sauceOrder.getSauceList()) {
+            int quantity = sauce.getQuantity();
+            double discountQuantity = Math.floor(quantity / DISCOUNT_AMOUNT);
+            double price = sauce.getPrice();
+            newTotalPrice = sauceOrder.getTotalPrice() - (price * discountQuantity);
+
+        }
+        sauceOrder.setTotalPrice(newTotalPrice);
     }
 }

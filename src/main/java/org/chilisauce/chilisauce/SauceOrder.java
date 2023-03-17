@@ -22,9 +22,9 @@ public class SauceOrder {
     @OneToMany(mappedBy = "id")
     List<Sauce> sauceList;
 
-    int totalPrice;
+    double totalPrice;
 
     public void calculateTotalPrice() {
-        totalPrice = sauceList.stream().map(sauce -> sauce.getQuantity() * sauce.getPrice()).mapToInt(Integer::intValue).sum();
+        totalPrice = sauceList.stream().map(sauce -> sauce.getQuantity() * sauce.getPrice()).mapToDouble(Double::doubleValue).sum();
     }
 }

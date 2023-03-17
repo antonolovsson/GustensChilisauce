@@ -25,7 +25,7 @@ public class Sauce {
     int quantity;
     private String origin;
     private int scoville;
-    private int price;
+    private double price;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "orderId")
