@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RestController()
@@ -14,26 +13,49 @@ public class SauceController {
     @Autowired
     SauceRepository sauceRepository;
 
-    @GetMapping("/getstock")
-    public List<Sauce> getFullStock(){
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    OrderService orderService;
+
+    @Autowired
+    SauceService sauceService;
+
+    @GetMapping("/stock")
+    public List<Sauce> getFullStock() {
         return sauceRepository.findAll();
     }
 
     @PostMapping("/postsauce")
-    public Sauce postSauce(@RequestBody Sauce sauce){
-        Sauce savedSauce = sauceRepository.saveAndFlush(sauce);
-        return savedSauce;
-    }
-
-    @PutMapping("/buysauce")
-    public Optional<Sauce> buySauce(@RequestParam int id, @RequestParam int units){
-        Optional<Sauce> sauceInDb = sauceRepository.findById(id);
-        if(sauceInDb.isPresent()){
-            sauceInDb.get().stock = sauceInDb.get().stock - units;
-            sauceRepository.save(sauceInDb.get());
-        }
-        return sauceRepository.findById(id);
+    public List<Sauce> postSauceList(@RequestBody List<Sauce> sauces) {
+        sauceService.updateSauceList(sauces);
+        return sauces;
     }
 
 
+    @GetMapping("/filter")
+    public List<Sauce> getFiltered(@RequestParam(required = false) String scoville,
+                                   @RequestParam(required = false) String origin,
+                                   @RequestParam(required = false) String name) {
+
+        return sauceRepository.getSauceByScovilleAndOriginAndName(scoville, origin, name);
+    }
+
+    @GetMapping("/filters")
+    public List<Sauce> getFiltereds(@RequestParam(required = false) String scoville,
+                                    @RequestParam(required = false) String origin,
+                                    @RequestParam(required = false) String name) {
+
+        return sauceRepository.getFilteredList(scoville, origin, name);
+    }
+
+
+    //TODO Display the values from the DB (not the null values)
+    @PostMapping("/placeorder")
+    public SauceOrder placeOrder(@RequestBody SauceOrder sauceOrder) {
+        SauceOrder savedSauceOrder = orderRepository.save(sauceOrder);
+        orderService.processOrder(sauceOrder);
+        return savedSauceOrder;
+    }
 }
