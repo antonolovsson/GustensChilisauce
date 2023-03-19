@@ -19,15 +19,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void processOrder(SauceOrder sauceOrder) {
-        for (Sauce sauceInOrder : sauceOrder.sauceList) {
+        for (Sauce sauceInOrder : sauceOrder.getSauceList()) {
             Optional<Sauce> byId = sauceRepository.findById(sauceInOrder.getId());
             if (byId.isPresent()) {
                 Sauce sauceInDb = byId.get();
-                sauceInDb.quantity -= sauceInOrder.quantity;
+                sauceInDb.setQuantity(sauceInDb.getQuantity() - sauceInOrder.getQuantity());
                 sauceRepository.save(sauceInDb);
             }
         }
-        sauceOrder.calculateTotalPrice();
     }
 
     @Override
@@ -43,21 +42,7 @@ public class OrderServiceImpl implements OrderService {
                         .build()).toList();
         sauceOrder.setSauceList(updatedWithInfoOrder);
         sauceOrder.calculateTotalPrice();
-        calculateDiscount(sauceOrder);
+        sauceOrder.calculateDiscount(DISCOUNT_AMOUNT);
         return orderRepository.save(sauceOrder);
-    }
-
-
-    //TODO FIX THIS SHIT LOGIC
-    private void calculateDiscount(SauceOrder sauceOrder){
-        double newTotalPrice = 0;
-        for (Sauce sauce : sauceOrder.getSauceList()) {
-            int quantity = sauce.getQuantity();
-            double discountQuantity = Math.floor(quantity / DISCOUNT_AMOUNT);
-            double price = sauce.getPrice();
-            newTotalPrice = sauceOrder.getTotalPrice() - (price * discountQuantity);
-
-        }
-        sauceOrder.setTotalPrice(newTotalPrice);
     }
 }

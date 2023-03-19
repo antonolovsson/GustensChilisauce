@@ -31,8 +31,6 @@ public class SauceController {
         return sauceService.getStock(scoville, origin, name);
     }
 
-
-    //TODO Display the values from the DB (not the null values)
     @PostMapping("/placeOrder")
     public SauceOrder placeOrder(@RequestBody SauceOrder sauceOrder) {
         SauceOrder savedSauceOrder = orderService.placeOrder(sauceOrder);

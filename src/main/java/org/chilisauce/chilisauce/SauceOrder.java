@@ -18,13 +18,23 @@ public class SauceOrder {
     private int orderId;
     private String clientName;
     private int clientId;
+    private double totalPrice;
+    private double priceBeforeDiscount;
 
     @OneToMany(mappedBy = "id")
-    List<Sauce> sauceList;
-
-    double totalPrice;
-
+    private List<Sauce> sauceList;
     public void calculateTotalPrice() {
         totalPrice = sauceList.stream().map(sauce -> sauce.getQuantity() * sauce.getPrice()).mapToDouble(Double::doubleValue).sum();
+    }
+    public void calculateDiscount(int discountAmount){
+        double newTotalPrice = getTotalPrice();
+        this.priceBeforeDiscount=totalPrice;
+        for (Sauce sauce : getSauceList()) {
+            int quantity = sauce.getQuantity();
+            double discountQuantity = Math.floor(quantity / discountAmount);
+            double price = sauce.getPrice();
+            newTotalPrice = newTotalPrice - (price * discountQuantity);
+        }
+        setTotalPrice(newTotalPrice);
     }
 }

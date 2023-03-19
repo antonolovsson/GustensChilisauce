@@ -20,9 +20,7 @@ public class Sauce {
     @Id
     private int id;
     private String name;
-
-    //TODO Set to private.
-    int quantity;
+    private int quantity;
     private String origin;
     private int scoville;
     private double price;
